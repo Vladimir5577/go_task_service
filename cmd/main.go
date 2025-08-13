@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"task_service/internal/handler"
+	"task_service/internal/model"
 	"task_service/internal/repository"
 	"task_service/internal/service"
 	"task_service/internal/storage"
@@ -14,11 +15,14 @@ const (
 )
 
 func main() {
+	logChan := make(chan model.Logger)
+	go service.StartLogging(logChan)
+
 	mux := http.NewServeMux()
 
 	storage := storage.NewInMemoryStorage()
 	taskRepository := repository.NewTaskRepository(storage)
-	taskService := service.NewTaskService(taskRepository)
+	taskService := service.NewTaskService(taskRepository, logChan)
 	taskHandler := handler.NewTaskHandler(taskService)
 
 	mux.HandleFunc("POST /tasks", taskHandler.Create())
