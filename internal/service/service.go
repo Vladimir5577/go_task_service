@@ -7,3 +7,8 @@ type TaskServiceInterface interface {
 	GetById(string) (model.Task, error)
 	GetAll(string) ([]model.Task, error)
 }
+
+type LoggerServiceInterface interface {
+	AddLog(action string, success bool, message string)
+	WriteLogging()
+}

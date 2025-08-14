@@ -22,13 +22,16 @@ const (
 func main() {
 
 	logChan := make(chan model.Logger)
-	go service.StartLogging(logChan)
+	defer close(logChan)
+
+	loggerService := service.NewLoggerService(logChan)
+	go loggerService.WriteLogging()
 
 	mux := http.NewServeMux()
 
 	storage := storage.NewInMemoryStorage()
 	taskRepository := repository.NewTaskRepository(storage)
-	taskService := service.NewTaskService(taskRepository, logChan)
+	taskService := service.NewTaskService(taskRepository, loggerService)
 	taskHandler := handler.NewTaskHandler(taskService)
 
 	mux.HandleFunc("POST /tasks", taskHandler.Create())
