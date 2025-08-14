@@ -1,10 +1,10 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"task_service/internal/helper"
 	"task_service/internal/model"
 	"task_service/internal/repository"
 )
@@ -22,17 +22,11 @@ func NewTaskService(taskRepository repository.TaskRepositoryInterface, loggerSer
 }
 
 func (t *TaskService) Create(task model.Task) (model.Task, error) {
-	if task.Title == "" {
-		t.loggerService.AddLog("POST /tasks", false, "Title required!")
-		return task, errors.New("title required")
+	err := helper.ValidateRequest(task)
+	if err != nil {
+		t.loggerService.AddLog("POST /tasks", false, err.Error())
+		return task, err
 	}
-	if task.Status == "" {
-		t.loggerService.AddLog("POST /tasks", false, "Status required!")
-		return task, errors.New("status required")
-	}
-	// if !(task.Status != model.StatusPending) && !(task.Status != model.StatusInProcess) && !(task.Status != model.StatusDone) {
-	// 	return task, errors.New("status should be one of [pending, inProcess, done]")
-	// }
 
 	res, err := t.taskRepository.Create(task)
 	if err != nil {
@@ -67,13 +61,14 @@ func (t *TaskService) GetAll(status string) ([]model.Task, error) {
 		t.loggerService.AddLog("GET /tasks?status="+status, false, err.Error())
 		return res, &model.ServiceError{StatusCode: http.StatusBadRequest, Message: err.Error()}
 	}
+	countTasks := len(res)
 	var logMessage string
 	var logUrl string
-	if status == "" {
-		logMessage = fmt.Sprintf("Got all tasks with status = %v successfully.", status)
+	if status != "" {
+		logMessage = fmt.Sprintf("Got %v tasks with status = %v successfully.", countTasks, status)
 		logUrl = "GET /tasks?status=" + status
 	} else {
-		logMessage = "Got all tasks successfully."
+		logMessage = fmt.Sprintf("Got %v tasks successfully.", countTasks)
 		logUrl = "GET /tasks"
 	}
 	t.loggerService.AddLog(logUrl, true, logMessage)
