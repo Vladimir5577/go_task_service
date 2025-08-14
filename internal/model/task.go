@@ -3,9 +3,9 @@ package model
 type TaskStatus string
 
 const (
-	StatusPending   TaskStatus = "Pending"
-	StatusInProcess TaskStatus = "InProcess"
-	StatusDone      TaskStatus = "Done"
+	StatusPending   TaskStatus = "pending"
+	StatusInProcess TaskStatus = "process"
+	StatusDone      TaskStatus = "done"
 )
 
 type Task struct {

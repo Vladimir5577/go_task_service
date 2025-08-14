@@ -1,0 +1,12 @@
+services:
+
+  app:
+    container_name: go_container
+    tty: true
+    build: .
+    ports:
+      - "8080:8080"
+    command: >
+      sh -c "
+      ./tmp/main
+      "
