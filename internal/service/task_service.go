@@ -8,12 +8,6 @@ import (
 	"time"
 )
 
-type TaskServiceInterface interface {
-	Create(model.Task) (model.Task, error)
-	GetById(string) (model.Task, error)
-	GetAll(string) ([]model.Task, error)
-}
-
 type TaskService struct {
 	taskRepository repository.TaskRepositoryInterface
 	logChan        chan model.Logger

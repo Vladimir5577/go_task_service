@@ -6,12 +6,6 @@ import (
 	"task_service/internal/storage"
 )
 
-type TaskRepositoryInterface interface {
-	Create(model.Task) (model.Task, error)
-	GetById(int) (model.Task, error)
-	GetAll(string) ([]model.Task, error)
-}
-
 type TaskRepository struct {
 	storage *storage.InMemoryStorage
 }
