@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"net/http"
 	"task_service/internal/model"
 	"task_service/internal/storage"
 )
@@ -33,7 +34,7 @@ func (t *TaskRepository) GetById(id int) (model.Task, error) {
 
 	task, found := t.storage.Tasks[id]
 	if !found {
-		return task, fmt.Errorf("task with id = %v not found", id)
+		return task, &model.ServiceError{StatusCode: http.StatusNotFound, Message: fmt.Sprintf("task with id = %v not found", id)}
 	}
 	return task, nil
 }

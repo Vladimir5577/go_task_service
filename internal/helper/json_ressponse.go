@@ -3,6 +3,7 @@ package helper
 import (
 	"encoding/json"
 	"net/http"
+	"task_service/internal/model"
 )
 
 type JsonResponseType struct {
@@ -24,4 +25,13 @@ func JsonResponse(w http.ResponseWriter, data any, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(resp)
+}
+
+func ParseErrorResponse(w http.ResponseWriter, data any, statusCode int) {
+	if serviceError, ok := data.(*model.ServiceError); ok {
+		JsonResponse(w, serviceError.Message, serviceError.StatusCode)
+	} else {
+		err, _ := data.(error)
+		JsonResponse(w, err.Error(), statusCode)
+	}
 }

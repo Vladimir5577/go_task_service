@@ -38,7 +38,7 @@ func (t *TaskHandler) GetById() http.HandlerFunc {
 		idString := r.PathValue("id")
 		res, err := t.taskService.GetById(idString)
 		if err != nil {
-			helper.JsonResponse(w, err.Error(), http.StatusBadRequest)
+			helper.ParseErrorResponse(w, err, http.StatusBadRequest)
 			return
 		}
 		helper.JsonResponse(w, res, http.StatusOK)

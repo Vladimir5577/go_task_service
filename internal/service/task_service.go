@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
 	"task_service/internal/model"
 	"task_service/internal/repository"
@@ -53,7 +54,7 @@ func (t *TaskService) GetById(idString string) (model.Task, error) {
 	}
 	res, err := t.taskRepository.GetById(id)
 	if err != nil {
-		t.loggerService.AddLog("GET /tasks"+idString, false, err.Error())
+		t.loggerService.AddLog("GET /tasks/"+idString, false, err.Error())
 		return task, err
 	}
 	t.loggerService.AddLog("GET /tasks"+idString, true, fmt.Sprintf("Task with id = %v received.", idString))
@@ -64,7 +65,7 @@ func (t *TaskService) GetAll(status string) ([]model.Task, error) {
 	res, err := t.taskRepository.GetAll(status)
 	if err != nil {
 		t.loggerService.AddLog("GET /tasks?status="+status, false, err.Error())
-		return res, err
+		return res, &model.ServiceError{StatusCode: http.StatusBadRequest, Message: err.Error()}
 	}
 	var logMessage string
 	var logUrl string
